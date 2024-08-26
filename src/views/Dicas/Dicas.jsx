@@ -9,21 +9,26 @@ const Dicas = () => {
     const [blog, setBlog] = useState(false)
     const [idBlog, setIdBlog] = useState("")
 
-    useEffect(() => setBlog(true), [])
+    useEffect(() => setBlog(false), [])
 
     const handleClick = (id) => {
         setIdBlog(id)
-        setBlog(false)
+        setBlog(true)
     }
 
     return (
         <div id="dicas-saude">
-            <div className="titulo-saude">
-                <h3>Dicas de <span className="pink-text">Saúde</span></h3>
-            </div>
+            {
+                !blog 
+                    && (
+                        <div className="titulo-saude">
+                            <h3>Dicas de <span className="pink-text">Saúde</span></h3>
+                        </div>
+                    )
+            }
             <div className="cards">
                 {
-                    blog ?
+                    !blog ?
                         cards.map((card, i) => (
                             <CardBlog
                                 img={card.img}
@@ -35,7 +40,7 @@ const Dicas = () => {
                             />
                         ))
 
-                        : <Blog id={idBlog} />
+                        : <Blog id={idBlog} setBlogFalse={() => setBlog(false)} />
                 }
             </div>
 

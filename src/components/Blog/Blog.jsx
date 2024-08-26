@@ -3,7 +3,7 @@ import back from "../../assets/back.svg"
 import { useEffect, useState } from "react"
 import cards from "../../mocks/cards.json"
 
-const Blog = ({id}) => {
+const Blog = ({id, setBlogFalse}) => {
 
     const [card, setCard] = useState({})
 
@@ -16,8 +16,8 @@ const Blog = ({id}) => {
     return (
         <section id="blog">
             <div className="header">
-                <div className="back">
-                    {back}
+                <div className="back" onClick={() => setBlogFalse(false)}>
+                    <img src={back} alt="Voltar" />
                 </div>
             </div>
 
@@ -33,7 +33,7 @@ const Blog = ({id}) => {
             </div>
 
             <div className="footer">
-                <h5>{card.dataBlog}</h5>
+                <h6>{card.subtitle}</h6>
             </div>
         </section>
     )
