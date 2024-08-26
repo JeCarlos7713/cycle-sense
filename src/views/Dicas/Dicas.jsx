@@ -1,8 +1,8 @@
 import "./Dicas.scss"
 import cards from "./../../mocks/cards.json"
-import CardBlog from "../CardBlog/CardBlog"
+import CardBlog from "../../components/CardBlog/CardBlog"
 import { useEffect, useState } from "react"
-import Blog from "../Blog/Blog"
+import Blog from "../../components/Blog/Blog"
 
 const Dicas = () => {
 
