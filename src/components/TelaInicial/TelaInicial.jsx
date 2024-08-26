@@ -1,36 +1,60 @@
 import { useEffect, useState } from "react"
 import CalendarioSemanal from "../CalendarioSemanal/CalendarioSemanal"
 import CardBlog from "../CardBlog/CardBlog"
-import {jwtDecode} from "jwt-decode"
+//import {jwtDecode} from "jwt-decode"
 import "./TelaInicial.scss"
 import { useNavigate } from "react-router-dom"
 import Ciclo from "../../services/ciclo"
 import Cards from "./../../mocks/cards.json"
 
+//Dados mockados
+import mockAuth from "./../../mocks/user.json"
+
 const TelaInicial = () => {
     const navigate = useNavigate()
-    const [day, month, year] = new Date().toLocaleDateString().split("/")
-    const dayWeek = new Date().getDay()
-    const formattedMonth = getFormattedMonth(Number(month) - 1)
-    const cards = Cards
     
+    const [day, setDay] = useState(new Date().getDate())
+    const [month, setMonth] = useState((new Date().getMonth() + 1))
+    const [year, setYear] = useState(new Date().getYear())
+    const [dayWeek, setDayWeek] = useState(new Date().getDay())
+    const [formattedMonth, setFormattedMonth] = useState("")
+    const [cards, setCards] = useState([])
+
     const [name, setName] = useState()
     const [id, setId] = useState()
-    const [ciclo, setCiclo] = useState()
+    const [ciclo, setCiclo] = useState(0)
 
     useEffect(() => {
-        const token = sessionStorage.getItem("token")
+        dateComponent()
+    }, [])
+    useEffect(() => {
+        initCards()
+        const token = mockAuth
         if (token) {
-            const decodeToken = jwtDecode(token)
-            const {nome, id} = decodeToken
+            //const decodeToken = jwtDecode(token)
+            const {nome, id, ciclo} = token[0]
             
-            getCiclo(id)
+            setCiclo(ciclo)
             setName(nome)
             setId(id)
         }else{
             navigate("/login")
         }
     }, [])
+
+    const dateComponent = () => {
+        const [day, month, year] = new Date().toLocaleDateString().split("/")
+        const dayWeek = new Date().getDay()
+        const formattedMonth = getFormattedMonth(Number(month) - 1)
+
+        setDay(Number(day))
+        setMonth(Number(month))
+        setYear(Number(year))
+        setDayWeek(dayWeek)
+        setFormattedMonth(formattedMonth)
+    }
+
+    const initCards = () => setCards(Cards)
 
     const getCiclo = async (id) => {
         const requestCiclo = new Ciclo(id)
@@ -50,11 +74,21 @@ const TelaInicial = () => {
                 <div className="header-calendario">
                     <span style={{fontWeight: 700}}>{day} de {formattedMonth} de <span className="pink-text">{year}</span></span>
 
-                    <span className="dias-menstruacao">Faltam <span className="circle">{ciclo}</span> dias para sua menstruação</span>
+                    <div className="dias-menstruacao">
+                        {
+                            ciclo > 0 
+                            ? 
+                                (<span>Faltam <span className="circle">{ciclo}</span> dias para sua menstruação</span> ) 
+                            : 
+                                ciclo < 0 
+                                    ? <h5 className="pink-text"> {Math.abs(ciclo)} dia(s) da sua menstruação inicial!</h5> 
+                                    : <h5 className="pink-text">Sua menstruação se inicia hoje!</h5> 
+                        }
+                    </div>
                 </div>
 
                 <div className="body-calendario">
-                    <CalendarioSemanal actualDate={Number(day)} dayOnWeek={dayWeek} month={Number(month)} year={Number(year)} ciclo={(ciclo + Number(day))} />
+                    <CalendarioSemanal actualDate={day} dayOnWeek={dayWeek} month={month} year={year} ciclo={(ciclo + day)} periodUser={ciclo} />
                 </div>
             </div>
 
